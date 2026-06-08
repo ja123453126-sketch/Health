@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>蕭家杰 術後健康整合面板</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:100%}
+body{background:#07111f;color:#dce8f5;font-family:'Noto Sans TC',system-ui,sans-serif;min-height:100%}
+:root{--teal:#00c9a7;--red:#f05252;--amber:#f0a500;--blue:#5b9df5;--lime:#7ec84a;--purple:#a78bfa;--s1:#0d1a2e;--s2:#132038;--bd:#1a2d45;--muted:#4a6580;--label:#6f8fad;--mono:'DM Mono',monospace}
+.app{max-width:920px;margin:0 auto;padding:16px 12px 70px}
+h1{font-size:19px;font-weight:900;color:var(--teal);letter-spacing:-.5px;margin-bottom:4px}
+.badge{font-size:11px;font-weight:700;color:#001a14;background:#00c9a7;padding:2px 8px;border-radius:6px;vertical-align:middle;font-family:var(--mono)}
+.sub{font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:14px}
+.tabs{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;margin-bottom:18px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:8px 18px;border-radius:8px;border:1px solid var(--bd);background:var(--s1);color:var(--muted);font-size:13px;cursor:pointer;white-space:nowrap;font-weight:700;transition:.15s}
+.tab.on{background:rgba(0,201,167,.12);border-color:var(--teal);color:var(--teal)}
+.page{display:none}.page.on{display:block}
+.banner{background:linear-gradient(135deg,var(--s2),var(--s1));border:1px solid var(--teal);border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:16px}
+.banner .days{font-family:var(--mono);font-size:34px;font-weight:500;color:var(--teal);line-height:1}
+.banner .bx h3{font-size:14px;font-weight:700;margin-bottom:3px}
+.banner .bx p{font-size:11px;color:var(--label);line-height:1.6}
+.mile{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.mile .m{background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:10px 12px}
+.mile .m .t{font-size:10px;color:var(--label);font-family:var(--mono);margin-bottom:3px}
+.mile .m .d{font-size:13px;font-weight:700}
+.mile .m .c{font-size:11px;color:var(--amber);font-family:var(--mono);margin-top:2px}
+.sec-t{font-size:11px;font-weight:700;color:var(--label);text-transform:uppercase;letter-spacing:1px;margin:18px 0 10px;display:flex;align-items:center;gap:8px}
+.sec-t:first-child{margin-top:4px}
+.sec-t::after{content:'';flex:1;height:1px;background:var(--bd)}
+.sg{display:grid;gap:8px;margin-bottom:8px}
+.sg2{grid-template-columns:1fr 1fr}.sg3{grid-template-columns:1fr 1fr 1fr}.sg4{grid-template-columns:1fr 1fr 1fr 1fr}
+@media(max-width:480px){.sg4{grid-template-columns:1fr 1fr}}
+.sc{background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:11px 12px;text-align:center;position:relative}
+.sc.teal{border-color:var(--teal);background:rgba(0,201,167,.08)}.sc.blue{border-color:var(--blue);background:rgba(91,157,245,.08)}
+.sc.red{border-color:var(--red);background:rgba(240,82,82,.08)}.sc.amber{border-color:var(--amber);background:rgba(240,165,0,.08)}
+.sc.lime{border-color:var(--lime);background:rgba(126,200,74,.08)}.sc.purple{border-color:var(--purple);background:rgba(167,139,250,.08)}
+.sl{font-size:9.5px;color:var(--label);font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.sv{font-size:20px;font-family:var(--mono);font-weight:500;line-height:1}
+.sc.teal .sv{color:var(--teal)}.sc.blue .sv{color:var(--blue)}.sc.red .sv{color:var(--red)}.sc.amber .sv{color:var(--amber)}.sc.lime .sv{color:var(--lime)}.sc.purple .sv{color:var(--purple)}
+.su{font-size:10px;color:var(--muted);margin-top:3px}
+.stag{position:absolute;top:7px;right:7px;font-size:8px;background:var(--red);color:#fff;padding:1px 5px;border-radius:4px;font-weight:700}
+.stag.w{background:var(--amber);color:#1a1100}
+.tgt{background:var(--s1);border:1px solid var(--bd);border-radius:11px;padding:13px 15px;margin-bottom:9px}
+.tgt-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.tgt-name{font-size:12px;font-weight:700}.tgt-val{font-family:var(--mono);font-size:13px}.tgt-val b{font-size:18px;font-weight:500}
+.tgt-bar{height:8px;background:#07111f;border-radius:5px;overflow:hidden}
+.tgt-fill{height:100%;border-radius:5px;transition:width .4s}
+.tgt-msg{font-size:10px;color:var(--muted);margin-top:5px;font-family:var(--mono)}
+.deficit{background:var(--s1);border:1px solid var(--bd);border-radius:11px;padding:14px 15px;margin-bottom:8px}
+.deficit h4{font-size:11px;color:var(--label);text-transform:uppercase;letter-spacing:.6px;font-family:var(--mono);margin-bottom:10px}
+.def-row{display:flex;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:13px;padding:3px 0}
+.def-row .lab{color:var(--label)}
+.def-row input{width:90px;background:#07111f;border:1px solid var(--bd);border-radius:6px;color:#dce8f5;font-family:var(--mono);font-size:14px;padding:5px 8px;text-align:right;outline:none}
+.def-row input:focus{border-color:var(--teal)}
+.def-line{height:1px;background:var(--bd);margin:8px 0}
+.def-result{display:flex;justify-content:space-between;align-items:baseline}
+.def-result .lab{font-size:12px;font-weight:700}.def-result .num{font-family:var(--mono);font-size:24px;font-weight:500}
+.drow{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.dc{background:var(--s1);border:1px solid var(--bd);border-radius:9px;padding:9px;text-align:center}
+.dc.up{border-color:rgba(0,201,167,.4)}.dc.dn{border-color:rgba(240,82,82,.4)}
+.dc-l{font-size:9px;color:var(--label);font-family:var(--mono);margin-bottom:3px}
+.dc-v{font-size:15px;font-family:var(--mono);font-weight:500}.dc.up .dc-v{color:var(--teal)}.dc.dn .dc-v{color:var(--red)}
+.dc-d{font-size:8.5px;color:var(--muted);font-family:var(--mono);margin-top:2px}
+.ex,.food{background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.ex.cardio{border-left:3px solid var(--blue)}.ex.strength{border-left:3px solid var(--teal)}
+.ex-ic{font-size:18px;width:22px;text-align:center;flex-shrink:0}
+.ex-main,.food-main{flex:1;min-width:0}
+.ex-name,.food-name{font-size:13px;font-weight:700}
+.ex-detail,.food-macro{font-size:11px;color:var(--label);font-family:var(--mono);margin-top:2px}
+.ex-note,.food-note{font-size:10px;color:var(--muted);margin-top:1px}
+.ex-vol,.food-kcal{text-align:right;flex-shrink:0}
+.ex-vol .v,.food-kcal .v{font-size:14px;font-family:var(--mono);font-weight:500;color:var(--teal)}
+.ex-vol .l,.food-kcal .l{font-size:9px;color:var(--muted)}
+.ex-del,.food-del{background:none;border:none;color:var(--muted);font-size:15px;cursor:pointer;flex-shrink:0;padding:0 2px}
+.ex-del:hover,.food-del:hover{color:var(--red)}
+.form{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:15px;margin-bottom:8px}
+.form h3{font-size:14px;font-weight:700;color:var(--teal);margin-bottom:14px}
+.toggle,.mealsel{display:flex;gap:5px;margin-bottom:14px}
+.toggle button,.mealsel button{flex:1;padding:9px 4px;border-radius:8px;border:1px solid var(--bd);background:#07111f;color:var(--muted);font-size:12.5px;font-weight:700;cursor:pointer;transition:.15s}
+.toggle button.on,.mealsel button.on{background:rgba(0,201,167,.14);border-color:var(--teal);color:var(--teal)}
+.field{margin-bottom:11px}
+.field label{display:block;font-size:10px;color:var(--label);font-family:var(--mono);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+.field input,.field select{width:100%;background:#07111f;border:1px solid var(--bd);border-radius:7px;color:#dce8f5;font-family:var(--mono);font-size:14px;padding:9px 11px;outline:none}
+.field input:focus,.field select:focus{border-color:var(--teal)}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.r3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.btn{width:100%;background:var(--teal);color:#001a14;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px}
+.btn:active{opacity:.85}
+.presets{margin-bottom:14px}.presets .pl{font-size:10px;color:var(--label);font-family:var(--mono);margin-bottom:6px;text-transform:uppercase}
+.chip{display:inline-block;background:#07111f;border:1px solid var(--bd);border-radius:20px;padding:6px 12px;font-size:11.5px;color:var(--blue);margin:0 5px 6px 0;cursor:pointer}
+.chip:active{background:rgba(91,157,245,.15)}
+.daygroup{margin-bottom:14px}
+.dayhead{font-size:12px;font-family:var(--mono);color:var(--teal);font-weight:500;margin-bottom:7px;display:flex;justify-content:space-between;align-items:baseline}
+.dayhead .meta{font-size:10px;color:var(--muted)}
+.meal-head{display:flex;justify-content:space-between;align-items:baseline;margin:6px 0;padding:0 2px}
+.meal-name{font-size:12px;font-weight:700;color:var(--teal)}.meal-sub{font-size:10px;color:var(--muted);font-family:var(--mono)}
+.empty{text-align:center;padding:30px;color:var(--muted);font-size:12px;font-family:var(--mono)}
+.coachnote{background:rgba(240,165,0,.1);border:1px solid var(--amber);border-radius:10px;padding:10px 13px;margin-bottom:14px;display:flex;gap:9px;align-items:flex-start}
+.coachnote .ic{font-size:16px}.coachnote .tx{font-size:11px;color:#f5d99a;line-height:1.6}.coachnote .tx b{color:var(--amber)}
+.chart-box{background:var(--s1);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:12px}
+.chart-title{font-size:10px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+svg.chart{width:100%;overflow:visible}
+.progtable{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px;margin-top:6px}
+.progtable th{color:var(--label);font-size:10px;text-align:left;padding:5px 8px;border-bottom:1px solid var(--bd);text-transform:uppercase}
+.progtable td{padding:6px 8px;border-bottom:1px solid rgba(26,45,69,.4)}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--teal);color:#001a14;padding:10px 18px;border-radius:9px;font-weight:700;font-size:13px;z-index:999;opacity:0;transition:.3s;pointer-events:none}
+.toast.show{opacity:1}
+.foot{text-align:center;font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:24px;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>🫀 蕭家杰 術後健康整合面板 <span class="badge">v5.0</span></h1>
+  <div class="sub">Left Radical Nephrectomy · RCC G2 pT3a · 林口長庚 · HBF-702T · 單檔整合版</div>
+
+  <div class="tabs">
+    <button class="tab on" onclick="showTab(event,'overview')">📊 總覽</button>
+    <button class="tab" onclick="showTab(event,'body')">🫀 體組成</button>
+    <button class="tab" onclick="showTab(event,'gym')">🏋️ 健身</button>
+    <button class="tab" onclick="showTab(event,'diet')">🍽️ 飲食</button>
+  </div>
+
+  <!-- ═══ OVERVIEW ═══ -->
+  <div id="page-overview" class="page on">
+    <div class="banner">
+      <div class="days" id="op-days">—</div>
+      <div class="bx"><h3>術後復健中</h3><p id="op-sub">手術 2026/03/30 · 主治 林柏宏</p></div>
+    </div>
+    <div class="mile">
+      <div class="m"><div class="t">🏥 全身健檢</div><div class="d">6/15</div><div class="c" id="mile-615">—</div></div>
+      <div class="m"><div class="t">🔬 CT 追蹤</div><div class="d">8/04</div><div class="c" id="mile-804">—</div></div>
+    </div>
+
+    <div class="sec-t">最新體組成</div>
+    <div class="sg sg4" id="ov-body"></div>
+
+    <div class="sec-t">目標進度</div>
+    <div class="sg sg3" id="ov-goals"></div>
+
+    <div class="sec-t">今日活動 & 飲食</div>
+    <div class="sg sg4" id="ov-today"></div>
+  </div>
+
+  <!-- ═══ BODY ═══ -->
+  <div id="page-body" class="page">
+    <div class="sec-t" id="body-today-t">今日數據</div>
+    <div class="sg sg3" id="body-today"></div>
+    <div class="sec-t">部位骨骼肌率（最新）</div>
+    <div class="sg sg3" id="body-parts"></div>
+    <div class="sec-t" id="body-prog-t">進展</div>
+    <div class="drow" id="body-delta"></div>
+    <div class="sec-t">趨勢圖（晨量）</div>
+    <div id="body-charts"></div>
+  </div>
+
+  <!-- ═══ GYM ═══ -->
+  <div id="page-gym" class="page">
+    <div class="coachnote"><span class="ic">🎯</span><span class="tx"><b>教練指示：降重求標準姿勢</b><br>術後復健期優先把動作品質練到位；姿勢穩定的動作維持標準 27.5kg，需調整的（如下拉機）暫時降重。</span></div>
+    <div class="tabs" style="margin-bottom:14px">
+      <button class="tab on" onclick="gymSub(event,'today')">今日</button>
+      <button class="tab" onclick="gymSub(event,'add')">新增</button>
+      <button class="tab" onclick="gymSub(event,'hist')">歷史</button>
+      <button class="tab" onclick="gymSub(event,'prog')">進度</button>
+    </div>
+    <div id="gym-today" class="gympage">
+      <div class="sg sg3" id="gym-stats"></div>
+      <div class="sec-t">今日項目</div>
+      <div id="gym-list"></div>
+    </div>
+    <div id="gym-add" class="gympage" style="display:none">
+      <div class="form">
+        <h3>➕ 新增訓練</h3>
+        <div class="toggle"><button id="gtg-s" class="on" onclick="gSetType('strength')">阻力訓練</button><button id="gtg-c" onclick="gSetType('cardio')">有氧/暖身</button></div>
+        <div class="field"><label>日期</label><input type="date" id="g-date"/></div>
+        <div id="g-sf">
+          <div class="field"><label>動作/機器</label><select id="g-ex-s"><option>下拉機(背)</option><option>坐姿划船·Matrix(背)</option><option>坐姿划船·Hammer(背)</option><option>胸推機(胸)</option><option>蝴蝶夾胸·前(胸)</option><option>後三角外展(後)</option><option>肩推機</option><option>二頭彎舉</option><option>三頭伸展</option><option>腿推機</option><option>腿伸展</option><option>腿彎舉</option><option>腹部捲腹</option><option>其他</option></select></div>
+          <div class="r3"><div class="field"><label>重量kg</label><input type="number" id="g-w" step="0.5"/></div><div class="field"><label>次數</label><input type="number" id="g-r" value="12"/></div><div class="field"><label>組數</label><input type="number" id="g-s" value="4"/></div></div>
+        </div>
+        <div id="g-cf" style="display:none">
+          <div class="field"><label>項目</label><select id="g-ex-c"><option>暖身騎乘</option><option>陪騎</option><option>拉筋伸展</option><option>跑步機</option><option>橢圓機</option></select></div>
+          <div class="r3"><div class="field"><label>時間(分)</label><input type="number" id="g-dur" step="0.1"/></div><div class="field"><label>距離km</label><input type="number" id="g-dist" step="0.01"/></div><div class="field"><label>心率bpm</label><input type="number" id="g-hr"/></div></div>
+        </div>
+        <div class="field"><label>備註</label><input type="text" id="g-note"/></div>
+        <button class="btn" onclick="gSave()">儲存</button>
+      </div>
+    </div>
+    <div id="gym-hist" class="gympage" style="display:none"></div>
+    <div id="gym-prog" class="gympage" style="display:none">
+      <div class="field"><label>選擇動作</label><select id="gprog-sel" onchange="gRenderProg()"></select></div>
+      <div id="gprog-content"></div>
+    </div>
+  </div>
+
+  <!-- ═══ DIET ═══ -->
+  <div id="page-diet" class="page">
+    <div class="tabs" style="margin-bottom:14px">
+      <button class="tab on" onclick="dietSub(event,'today')">今日</button>
+      <button class="tab" onclick="dietSub(event,'add')">新增</button>
+      <button class="tab" onclick="dietSub(event,'hist')">歷史</button>
+      <button class="tab" onclick="dietSub(event,'trend')">趨勢</button>
+    </div>
+    <div id="diet-today" class="dietpage">
+      <div class="tgt"><div class="tgt-top"><span class="tgt-name">🔥 熱量</span><span class="tgt-val"><b id="d-cal">0</b> / 1,700</span></div><div class="tgt-bar"><div class="tgt-fill" id="d-calbar"></div></div><div class="tgt-msg" id="d-calmsg"></div></div>
+      <div class="tgt"><div class="tgt-top"><span class="tgt-name">💪 蛋白質</span><span class="tgt-val"><b id="d-pro">0</b> / 120 g</span></div><div class="tgt-bar"><div class="tgt-fill" id="d-probar"></div></div><div class="tgt-msg" id="d-promsg"></div></div>
+      <div class="tgt"><div class="tgt-top"><span class="tgt-name">🧂 鈉（單腎）</span><span class="tgt-val"><b id="d-na">0</b> / 2,000 mg</span></div><div class="tgt-bar"><div class="tgt-fill" id="d-nabar"></div></div><div class="tgt-msg" id="d-namsg"></div></div>
+      <div class="deficit" style="margin-top:14px"><h4>🔢 熱量缺口（手錶總消耗 − 攝取）</h4>
+        <div class="def-row"><span class="lab">手錶總消耗</span><span><input type="number" id="burn-in" oninput="dSaveBurn()"/> kcal</span></div>
+        <div class="def-row"><span class="lab">今日攝取</span><span id="d-intake">0 kcal</span></div>
+        <div class="def-line"></div>
+        <div class="def-result"><span class="lab">缺口</span><span class="num" id="d-defnum">—</span></div>
+        <div class="tgt-msg" id="d-defmsg"></div>
+      </div>
+      <div class="sec-t">今日餐點</div>
+      <div id="diet-meals"></div>
+    </div>
+    <div id="diet-add" class="dietpage" style="display:none">
+      <div class="form"><h3>➕ 新增餐點</h3>
+        <div class="field"><label>日期</label><input type="date" id="d-date"/></div>
+        <div class="mealsel"><button class="on" onclick="dSetMeal('早餐')">早餐</button><button onclick="dSetMeal('午餐')">午餐</button><button onclick="dSetMeal('晚餐')">晚餐</button><button onclick="dSetMeal('點心')">點心</button></div>
+        <div class="presets"><div class="pl">快速帶入</div>
+          <span class="chip" onclick="dPreset('水煮蛋',70,6,0.5,5,70)">🥚 水煮蛋</span>
+          <span class="chip" onclick="dPreset('無糖優格',155,8.5,12,6,90)">🥛 優格</span>
+          <span class="chip" onclick="dPreset('濃豆漿375ml',190,19.1,7.9,9.8,60)">🫘 豆漿</span>
+          <span class="chip" onclick="dPreset('蛋白燕麥奶375ml',150,15,9.8,5.6,150)">🥤 蛋白奶</span>
+          <span class="chip" onclick="dPreset('雞胸肉100g',165,31,0,3.6,75)">🍗 雞胸</span>
+          <span class="chip" onclick="dPreset('白飯半碗',117,2.5,26,0.3,2)">🍚 半碗飯</span>
+          <span class="chip" onclick="dPreset('蘋果',93,0.5,24,0.3,2)">🍎 蘋果</span>
+        </div>
+        <div class="field"><label>食物名稱</label><input type="text" id="d-food"/></div>
+        <div class="r2"><div class="field"><label>熱量kcal</label><input type="number" id="d-kcal"/></div><div class="field"><label>蛋白質g</label><input type="number" id="d-pro-i" step="0.1"/></div></div>
+        <div class="r3"><div class="field"><label>碳水g</label><input type="number" id="d-carb" step="0.1"/></div><div class="field"><label>脂肪g</label><input type="number" id="d-fat" step="0.1"/></div><div class="field"><label>鈉mg</label><input type="number" id="d-na-i"/></div></div>
+        <div class="field"><label>備註</label><input type="text" id="d-note"/></div>
+        <button class="btn" onclick="dSave()">儲存</button>
+      </div>
+    </div>
+    <div id="diet-hist" class="dietpage" style="display:none"></div>
+    <div id="diet-trend" class="dietpage" style="display:none"></div>
+  </div>
+
+  <div class="foot">術後健康整合面板 v5.0 · 體組成寫入HTML · 健身/飲食存localStorage<br>手術日 2026/03/30 · 目標 90kg/24%/33kg · 蛋白≥120g · 鈉≤2000mg</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ════ DATA ════
+const SURGERY='2026-03-30';
+const BODY=[
+  {d:"04-20",w:99.7,f:31.7,fm:31.6,v:17.5,b:2027,m:29.1,mm:29.0,bmi:30.4,ba:61,sf:22.4},
+  {d:"04-21",w:99.1,f:32.9,fm:32.6,v:17.5,b:2007,m:28.5,mm:28.2,bmi:30.2,ba:61,sf:23.1},
+  {d:"04-22",w:99.5,f:32.0,fm:31.8,v:17.5,b:2021,m:28.9,mm:28.8,bmi:30.4,ba:61,sf:22.6},
+  {d:"04-23",w:99.2,f:32.6,fm:32.3,v:17.5,b:2012,m:28.7,mm:28.5,bmi:30.3,ba:61,sf:22.9},
+  {d:"04-24",w:99.3,f:32.5,fm:32.3,v:17.5,b:2014,m:28.7,mm:28.5,bmi:30.3,ba:61,sf:22.8},
+  {d:"04-25",w:99.2,f:31.9,fm:31.6,v:17.0,b:2017,m:29.0,mm:28.8,bmi:30.3,ba:60,sf:22.5},
+  {d:"04-26",w:99.8,f:31.7,fm:31.6,v:17.5,b:2028,m:29.1,mm:29.0,bmi:30.5,ba:61,sf:22.4},
+  {d:"04-27",w:98.7,f:33.1,fm:32.7,v:17.0,b:2000,m:28.4,mm:28.0,bmi:30.1,ba:61,sf:23.2},
+  {d:"04-28",w:98.6,f:33.5,fm:33.0,v:17.0,b:1995,m:28.2,mm:27.8,bmi:30.1,ba:61,sf:23.4},
+  {d:"04-29",w:98.0,f:32.9,fm:32.2,v:17.0,b:1990,m:28.5,mm:27.9,bmi:29.9,ba:61,sf:23.0},
+  {d:"04-30",w:98.2,f:32.1,fm:31.5,v:17.0,b:2000,m:28.9,mm:28.4,bmi:30.0,ba:60,sf:22.6},
+  {d:"05-01",w:99.1,f:30.8,fm:30.5,v:17.0,b:2025,m:29.6,mm:29.3,bmi:30.2,ba:60,sf:21.8},
+  {d:"05-02",w:99.4,f:30.8,fm:30.6,v:17.0,b:2030,m:29.6,mm:29.4,bmi:30.3,ba:60,sf:21.8},
+  {d:"05-03",w:99.3,f:32.0,fm:31.8,v:17.5,b:2018,m:29.0,mm:28.8,bmi:30.3,ba:61,sf:22.5},
+  {d:"05-04",w:99.4,f:32.1,fm:31.9,v:17.5,b:2019,m:28.9,mm:28.7,bmi:30.3,ba:61,sf:22.6},
+  {d:"05-05",w:98.9,f:31.3,fm:31.0,v:17.0,b:2018,m:29.3,mm:29.0,bmi:30.2,ba:60,sf:22.1},
+  {d:"05-06",w:98.9,f:31.5,fm:31.2,v:17.0,b:2016,m:29.2,mm:28.9,bmi:30.2,ba:60,sf:22.2},
+  {d:"05-07",w:99.0,f:31.3,fm:31.0,v:17.0,b:2019,m:29.3,mm:29.0,bmi:30.2,ba:60,sf:22.1},
+  {d:"05-08",w:98.4,f:31.8,fm:31.3,v:17.0,b:2005,m:29.0,mm:28.5,bmi:30.0,ba:60,sf:22.4},
+  {d:"05-09",w:98.5,f:31.9,fm:31.4,v:17.0,b:2005,m:28.9,mm:28.5,bmi:30.1,ba:60,sf:22.5},
+  {d:"05-11",w:100.2,f:32.1,fm:32.2,v:17.5,b:2031,m:28.9,mm:29.0,bmi:30.6,ba:61,sf:22.7},
+  {d:"05-12",w:98.8,f:32.9,fm:32.5,v:17.0,b:2003,m:28.5,mm:28.2,bmi:30.2,ba:61,sf:23.1},
+  {d:"05-13",w:99.2,f:31.4,fm:31.1,v:17.5,b:2021,m:29.3,mm:29.1,bmi:30.3,ba:60,sf:22.2},
+  {d:"05-14",w:98.6,f:31.6,fm:31.2,v:17.0,b:2009,m:29.1,mm:28.7,bmi:30.1,ba:60,sf:22.3},
+  {d:"05-15",w:98.6,f:32.2,fm:31.7,v:17.0,b:2005,m:28.9,mm:28.5,bmi:30.1,ba:60,sf:22.6},
+  {d:"05-16",w:98.5,f:31.6,fm:31.1,v:17.0,b:2008,m:29.1,mm:28.7,bmi:30.1,ba:60,sf:22.3},
+  {d:"05-17",w:99.0,f:30.9,fm:30.6,v:17.0,b:2023,m:29.6,mm:29.3,bmi:30.2,ba:60,sf:21.8},
+  {d:"05-18",w:98.3,f:30.9,fm:30.4,v:16.5,b:2011,m:29.5,mm:29.0,bmi:30.0,ba:59,sf:21.8},
+  {d:"05-19",w:97.8,f:31.2,fm:30.5,v:16.5,b:2000,m:29.3,mm:28.7,bmi:29.9,ba:60,sf:22.0},
+  {d:"05-20",w:97.7,f:29.7,fm:29.0,v:16.5,b:2012,m:30.2,mm:29.5,bmi:29.8,ba:58,sf:21.0},
+  {d:"05-21",w:97.4,f:29.9,fm:29.1,v:16.5,b:2004,m:30.0,mm:29.2,bmi:29.7,ba:58,sf:21.2},
+  {d:"05-22",w:97.2,f:30.7,fm:29.8,v:16.5,b:1995,m:29.6,mm:28.8,bmi:29.7,ba:59,sf:21.6},
+  {d:"05-23",w:98.3,f:30.2,fm:29.7,v:16.5,b:2017,m:29.9,mm:29.4,bmi:30.0,ba:59,sf:21.4},
+  {d:"05-24",w:98.2,f:29.7,fm:29.2,v:16.5,b:2020,m:30.2,mm:29.7,bmi:30.0,ba:59,sf:21.1},
+  {d:"05-25",w:97.8,f:30.2,fm:29.5,v:16.5,b:2009,m:29.9,mm:29.2,bmi:29.9,ba:59,sf:21.4},
+  {d:"05-26",w:98.1,f:30.1,fm:29.5,v:16.5,b:2014,m:29.9,mm:29.3,bmi:29.9,ba:59,sf:21.3},
+  {d:"05-27",w:97.9,f:30.3,fm:29.7,v:16.5,b:2010,m:29.8,mm:29.2,bmi:29.9,ba:59,sf:21.5},
+  {d:"06-06",w:96.8,f:31.3,fm:30.3,v:16.5,b:1984,m:29.2,mm:28.3,bmi:29.5,ba:60,sf:22.0},
+  {d:"06-07",w:98.1,f:30.0,fm:29.4,v:17.0,b:2015,m:30.0,mm:29.4,bmi:29.9,ba:59,sf:21.3},
+];
+const GYM_SEED=[
+  {id:1718000001,date:"2026-06-07",type:"cardio",exercise:"暖身騎乘",dur:15.9,dist:2.88,hr:108,note:"均速10.9km/h · 爬升15m"},
+  {id:1718000002,date:"2026-06-07",type:"cardio",exercise:"拉筋伸展",dur:10,dist:null,hr:null,note:""},
+  {id:1718000003,date:"2026-06-07",type:"strength",exercise:"下拉機(背)",w:13,r:12,s:2,note:"熱身組 · 教練降重練姿勢"},
+  {id:1718000004,date:"2026-06-07",type:"strength",exercise:"下拉機(背)",w:16.5,r:12,s:2,note:"工作組 · Life Fitness #3B6"},
+  {id:1718000005,date:"2026-06-07",type:"strength",exercise:"胸推·Precor(胸)",w:27,r:12,s:3,note:"姿勢已熟 · 標準重量 · #3C1"},
+  {id:1718000006,date:"2026-06-07",type:"strength",exercise:"蝴蝶夾胸·前(胸)",w:27.5,r:12,s:4,note:"標準1 · Life Fitness"},
+  {id:1718000007,date:"2026-06-07",type:"strength",exercise:"坐姿划船·Matrix(背)",w:27.5,r:12,s:4,note:"標準1"},
+  {id:1718000008,date:"2026-06-07",type:"strength",exercise:"坐姿划船·Hammer(背)",w:27.5,r:12,s:4,note:"標準1 · HS-RW #3B10"},
+  {id:1718000009,date:"2026-06-07",type:"strength",exercise:"胸推·Hammer(胸)",w:27.5,r:12,s:4,note:"標準1 · #3C11"},
+  {id:1718000010,date:"2026-06-07",type:"strength",exercise:"腹部捲腹",w:27.5,r:12,s:4,note:"⚠️術後 待6/15回診確認傷口再規律做"},
+  {id:1718000011,date:"2026-06-07",type:"cardio",exercise:"下午陪騎(4段)",dur:76,dist:7.59,hr:110,note:"陪小孩·中壢區·燃脂區間104-121bpm"},
+  {id:1718000012,date:"2026-06-07",type:"cardio",exercise:"晚間陪騎",dur:15.7,dist:1.81,hr:105,note:"中壢區"},
+];
+const FOOD_SEED=[
+  // 06-06（彙整）
+  {id:1717900001,date:"2026-06-06",meal:"早餐",food:"濃豆漿+三明治+燕麥奶",kcal:568,pro:49.4,carb:48,fat:25,na:878,note:""},
+  {id:1717900002,date:"2026-06-06",meal:"午餐",food:"親子豬排丼半份+茶葉蛋",kcal:377,pro:18.8,carb:43,fat:14,na:820,note:""},
+  {id:1717900003,date:"2026-06-06",meal:"晚餐",food:"烤蝦20+鮮蚵10+飯+菜",kcal:517,pro:65.9,carb:42,fat:7,na:691,note:"低鈉高蛋白"},
+  // 06-07 早餐
+  {id:1718000101,date:"2026-06-07",meal:"早餐",food:"水煮蛋",kcal:70,pro:6,carb:0.5,fat:5,na:70,note:""},
+  {id:1718000102,date:"2026-06-07",meal:"早餐",food:"蘋果",kcal:93,pro:0.5,carb:24,fat:0.3,na:2,note:"中型"},
+  {id:1718000103,date:"2026-06-07",meal:"早餐",food:"無糖優格",kcal:155,pro:8.5,carb:12,fat:6,na:90,note:"~250g"},
+  {id:1718000104,date:"2026-06-07",meal:"早餐",food:"橄欖油",kcal:40,pro:0,carb:0,fat:5,na:0,note:"1茶匙"},
+  // 06-07 午餐
+  {id:1718000111,date:"2026-06-07",meal:"午餐",food:"生菜沙拉",kcal:30,pro:1,carb:5,fat:0,na:20,note:""},
+  {id:1718000112,date:"2026-06-07",meal:"午餐",food:"培根片",kcal:130,pro:7,carb:1,fat:11,na:350,note:"~35g"},
+  {id:1718000113,date:"2026-06-07",meal:"午餐",food:"沙拉醬",kcal:40,pro:0,carb:2,fat:4,na:100,note:""},
+  {id:1718000114,date:"2026-06-07",meal:"午餐",food:"烤牛肉",kcal:270,pro:28,carb:0,fat:16,na:250,note:"~110g"},
+  {id:1718000115,date:"2026-06-07",meal:"午餐",food:"煎蛋",kcal:90,pro:6,carb:0.5,fat:7,na:70,note:""},
+  {id:1718000116,date:"2026-06-07",meal:"午餐",food:"白飯",kcal:155,pro:3,carb:34,fat:0.3,na:2,note:"~120g"},
+  {id:1718000123,date:"2026-06-07",meal:"點心",food:"繼光甜不辣2個",kcal:140,pro:8,carb:14,fat:6,na:480,note:"炸物·估算"},
+  {id:1718000124,date:"2026-06-07",meal:"點心",food:"繼光雞皮2個",kcal:160,pro:4,carb:0,fat:15,na:300,note:"炸物高脂·估算"},
+  {id:1718000122,date:"2026-06-07",meal:"點心",food:"SANGARIA黑咖啡",kcal:10,pro:0,carb:2,fat:0,na:5,note:"無糖"},
+  {id:1718000131,date:"2026-06-07",meal:"晚餐",food:"納豆軍艦2貫",kcal:120,pro:6,carb:16,fat:2,na:300,note:"スシロー"},
+  {id:1718000132,date:"2026-06-07",meal:"晚餐",food:"茶碗蒸",kcal:80,pro:5,carb:3,fat:4,na:450,note:"スシロー"},
+  {id:1718000133,date:"2026-06-07",meal:"晚餐",food:"海鮮手卷",kcal:120,pro:6,carb:18,fat:3,na:250,note:"スシロー"},
+  {id:1718000134,date:"2026-06-07",meal:"晚餐",food:"蝦(番茄沙拉)",kcal:70,pro:6,carb:8,fat:1,na:150,note:"スシロー"},
+  {id:1718000135,date:"2026-06-07",meal:"晚餐",food:"生蝦/甜蝦",kcal:50,pro:5,carb:8,fat:0.5,na:100,note:"スシロー"},
+  {id:1718000136,date:"2026-06-07",meal:"晚餐",food:"鮪魚2貫",kcal:100,pro:10,carb:16,fat:1,na:120,note:"スシロー"},
+  {id:1718000137,date:"2026-06-07",meal:"晚餐",food:"中トロ",kcal:80,pro:5,carb:8,fat:4,na:80,note:"スシロー"},
+];
+const BURN_SEED={"2026-06-06":2364,"2026-06-07":3377};
+
+const CAL_MAX=1700, PRO_MIN=120, NA_MAX=2000;
+const GOAL={w:90,f:24,mm:33};
+
+// ════ STORAGE ════
+function lsGet(k){try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch{return null;}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
+let gym=lsGet('gymLogs');
+if(gym===null){gym=GYM_SEED.slice();lsSet('gymLogs',gym);}else{const i=new Set(gym.map(e=>e.id));GYM_SEED.forEach(s=>{if(!i.has(s.id))gym.push(s);});gym.sort((a,b)=>a.date.localeCompare(b.date)||a.id-b.id);lsSet('gymLogs',gym);}
+let food=lsGet('foodLogs');
+if(food===null){food=FOOD_SEED.slice();lsSet('foodLogs',food);}else{food=food.filter(e=>e.id!==1718000121);const i=new Set(food.map(e=>e.id));FOOD_SEED.forEach(s=>{if(!i.has(s.id))food.push(s);});food.sort((a,b)=>a.date.localeCompare(b.date)||a.id-b.id);lsSet('foodLogs',food);}
+let burns=lsGet('dailyBurn')||{};
+Object.keys(BURN_SEED).forEach(d=>{if(!(d in burns))burns[d]=BURN_SEED[d];});
+lsSet('dailyBurn',burns);
+
+// ════ DATE HELPERS ════
+function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+const TODAY=today();
+const TODAY_MD=TODAY.slice(5);
+function daysBetween(a,b){return Math.round((new Date(b)-new Date(a))/864e5);}
+function fmtDate(d){const dt=new Date((d.length===5?'2026-'+d:d)+'T00:00:00');const wd=['日','一','二','三','四','五','六'][dt.getDay()];return (d.length===5?d:d.slice(5))+' (週'+wd+')';}
+
+// ════ OVERVIEW ════
+function renderOverview(){
+  const opd=daysBetween(SURGERY,TODAY);
+  document.getElementById('op-days').textContent=opd;
+  document.getElementById('op-sub').textContent='術後第 '+opd+' 天 · 手術 2026/03/30 · 主治 林柏宏';
+  const c615=daysBetween(TODAY,'2026-06-15'), c804=daysBetween(TODAY,'2026-08-04');
+  document.getElementById('mile-615').textContent=c615>0?'還有 '+c615+' 天':(c615===0?'就是今天':'已完成');
+  document.getElementById('mile-804').textContent=c804>0?'還有 '+c804+' 天':(c804===0?'就是今天':'已完成');
+  const L=BODY[BODY.length-1];
+  document.getElementById('ov-body').innerHTML=
+    card('teal','體重',L.w,'kg')+card('red','體脂率',L.f+'%','體脂'+L.fm+'kg')+
+    card('blue','骨骼肌',L.mm,'kg')+card('amber','內臟脂肪',L.v,'等級');
+  document.getElementById('ov-goals').innerHTML=
+    gcard('體重',L.w,GOAL.w,'kg',true)+gcard('體脂',L.f,GOAL.f,'%',true)+gcard('肌肉',L.mm,GOAL.mm,'kg',false);
+  // today gym+diet
+  const gt=gym.filter(e=>e.date===TODAY);
+  const vol=gt.reduce((s,e)=>s+(e.type==='strength'?(e.w||0)*(e.r||0)*(e.s||0):0),0);
+  const ft=food.filter(e=>e.date===TODAY);
+  const cal=ft.reduce((s,e)=>s+(e.kcal||0),0), pro=+ft.reduce((s,e)=>s+(e.pro||0),0).toFixed(0);
+  const burn=burns[TODAY], def=burn?burn-cal:null;
+  document.getElementById('ov-today').innerHTML=
+    card('teal','訓練量',vol?vol.toLocaleString():'—','kg')+
+    card('blue','攝取',cal||'—','kcal')+
+    card('lime','蛋白質',pro||'—','g')+
+    card(def==null?'':( def>0?'teal':'red'),'缺口',def==null?'—':((def>0?'+':'')+def.toLocaleString()),'kcal');
+}
+function card(cls,l,v,u){return `<div class="sc ${cls}"><div class="sl">${l}</div><div class="sv">${v}</div><div class="su">${u}</div></div>`;}
+function gcard(name,cur,goal,unit,lowerBetter){
+  const gap=lowerBetter?(cur-goal):(goal-cur);
+  const txt=lowerBetter?('缺 '+gap.toFixed(1)+unit):('差 '+gap.toFixed(1)+unit);
+  return `<div class="sc lime"><div class="sl">目標${name}</div><div class="sv" style="color:var(--lime)">${goal}</div><div class="su">${unit} · ${txt}</div></div>`;
+}
+
+// ════ BODY ════
+function renderBody(){
+  const L=BODY[BODY.length-1], F=BODY[0];
+  document.getElementById('body-today-t').textContent='今日數據（'+L.d+' 晨量）';
+  document.getElementById('body-today').innerHTML=
+    `<div class="sc teal"><div class="sl">體重</div><div class="sv">${L.w}</div><div class="su">kg</div></div>`+
+    `<div class="sc red"><div class="sl">體脂肪</div><div class="sv">${L.f}%</div><div class="su">${L.fm} kg</div><span class="stag">偏高</span></div>`+
+    `<div class="sc blue"><div class="sl">骨骼肌</div><div class="sv">${L.m}%</div><div class="su">${L.mm} kg</div></div>`+
+    `<div class="sc red"><div class="sl">內臟脂肪</div><div class="sv">${L.v}</div><div class="su">等級(正常≤9)</div><span class="stag">危險</span></div>`+
+    `<div class="sc amber"><div class="sl">BMI</div><div class="sv">${L.bmi}</div><div class="su">過重</div><span class="stag w">+</span></div>`+
+    `<div class="sc"><div class="sl">基礎代謝</div><div class="sv">${L.b.toLocaleString()}</div><div class="su">kcal · 身體年齡${L.ba}</div></div>`;
+  document.getElementById('body-parts').innerHTML=
+    `<div class="sc"><div class="sl">皮下脂肪率</div><div class="sv" style="color:var(--red)">${L.sf}%</div><div class="su">全身</div></div>`+
+    `<div class="sc"><div class="sl">內臟脂肪</div><div class="sv" style="color:var(--amber)">${L.v}</div><div class="su">OMRON等級</div></div>`+
+    `<div class="sc"><div class="sl">身體年齡</div><div class="sv" style="color:var(--blue)">${L.ba}</div><div class="su">歲</div></div>`;
+  const days=daysBetween('2026-'+F.d,'2026-'+L.d);
+  document.getElementById('body-prog-t').textContent=days+'天進展（'+F.d+'→'+L.d+'）';
+  const deltas=[
+    ['體重',L.w-F.w,'kg',false],['脂肪量',L.fm-F.fm,'kg',false],['體脂率',L.f-F.f,'%',false],
+    ['骨骼肌',L.mm-F.mm,'kg',true],['內臟脂肪',L.v-F.v,'級',false],['身體年齡',L.ba-F.ba,'歲',false]
+  ];
+  document.getElementById('body-delta').innerHTML=deltas.map(([n,d,u,hi])=>{
+    const good=hi?d>0:d<0;const sign=d>0?'+':'';
+    return `<div class="dc ${good?'up':'dn'}"><div class="dc-l">${n}</div><div class="dc-v">${sign}${d.toFixed(1)}<span style="font-size:11px">${u}</span></div><div class="dc-d">${(hi?F.mm:F[n==='體重'?'w':n==='脂肪量'?'fm':n==='體脂率'?'f':n==='內臟脂肪'?'v':'ba'])}→${(hi?L.mm:L[n==='體重'?'w':n==='脂肪量'?'fm':n==='體脂率'?'f':n==='內臟脂肪'?'v':'ba'])}</div></div>`;
+  }).join('');
+  document.getElementById('body-charts').innerHTML=
+    bchart('w','體重','#00c9a7','kg',GOAL.w)+bchart('f','體脂肪%','#f05252','%',GOAL.f)+
+    bchart('mm','骨骼肌量','#5b9df5','kg',GOAL.mm)+bchart('v','內臟脂肪','#f0a500','級')+
+    bchart('bmi','BMI','#a78bfa','')+bchart('b','基礎代謝','#7ec84a','kcal');
+}
+function bchart(key,label,color,unit,goal){
+  const vals=BODY.map(e=>e[key]), dates=BODY.map(e=>e.d);
+  const W=360,H=130,PL=40,PR=12,PT=14,PB=22,cw=W-PL-PR,ch=H-PT-PB,n=vals.length;
+  const allv=vals.concat(goal?[goal]:[]);
+  let mn=Math.min(...allv),mx=Math.max(...allv);const pad=(mx-mn)*0.1||1;mn-=pad;mx+=pad;
+  const xp=i=>PL+i/(n-1)*cw, yp=v=>PT+ch-(v-mn)/(mx-mn||1)*ch;
+  const pts=vals.map((v,i)=>`${xp(i).toFixed(1)},${yp(v).toFixed(1)}`).join(' ');
+  const gl=goal?`<line x1="${PL}" y1="${yp(goal).toFixed(1)}" x2="${W-PR}" y2="${yp(goal).toFixed(1)}" stroke="#f0a500" stroke-width="1" stroke-dasharray="4 3"/><text x="${W-PR}" y="${(yp(goal)-3).toFixed(1)}" fill="#f0a500" font-size="8" text-anchor="end">目標${goal}</text>`:'';
+  const last=vals[vals.length-1];
+  const dot=`<circle cx="${xp(n-1).toFixed(1)}" cy="${yp(last).toFixed(1)}" r="3.5" fill="${color}"/><text x="${xp(n-1).toFixed(1)}" y="${(yp(last)-7).toFixed(1)}" fill="${color}" font-size="10" text-anchor="end" font-family="monospace">${last}</text>`;
+  const xl=[0,Math.floor(n/2),n-1].map(i=>`<text x="${xp(i).toFixed(1)}" y="${H-5}" fill="#4a6580" font-size="8" text-anchor="middle">${dates[i]}</text>`).join('');
+  return `<div class="chart-box"><div class="chart-title">${label} ${unit}</div><svg class="chart" viewBox="0 0 ${W} ${H}"><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2"/>${gl}${dot}${xl}</svg></div>`;
+}
+
+// ════ GYM ════
+let gType='strength';
+const MO=['早餐','午餐','晚餐','點心'];
+function gIcon(e){if(e.type==='cardio'){if(e.exercise.includes('騎'))return'🚴';if(e.exercise.includes('拉筋'))return'🧘';if(e.exercise.includes('跑'))return'🏃';return'💨';}if(e.exercise.includes('背')||e.exercise.includes('划船'))return'🔙';if(e.exercise.includes('胸')||e.exercise.includes('夾胸'))return e.exercise.includes('夾')?'🦋':'💪';if(e.exercise.includes('肩')||e.exercise.includes('三角'))return'🤷';if(e.exercise.includes('腿'))return'🦵';if(e.exercise.includes('腹'))return'🔸';return'🏋️';}
+function gLine(e){if(e.type==='cardio'){let p=[];if(e.dur)p.push(e.dur+'分');if(e.dist)p.push(e.dist+'km');if(e.hr)p.push(e.hr+'bpm');return p.join(' · ');}return `${e.w}kg × ${e.r}下 × ${e.s}組`;}
+function gVol(e){return e.type==='strength'?(e.w||0)*(e.r||0)*(e.s||0):0;}
+function gRow(e){const v=gVol(e);return `<div class="ex ${e.type}"><div class="ex-ic">${gIcon(e)}</div><div class="ex-main"><div class="ex-name">${e.exercise}</div><div class="ex-detail">${gLine(e)}</div>${e.note?'<div class="ex-note">'+e.note+'</div>':''}</div>${v?`<div class="ex-vol"><div class="v">${v.toLocaleString()}</div><div class="l">kg量</div></div>`:''}<button class="ex-del" onclick="gDel(${e.id})">✕</button></div>`;}
+function renderGymToday(){
+  const t=gym.filter(e=>e.date===TODAY);
+  const vol=t.reduce((s,e)=>s+gVol(e),0), sc=t.filter(e=>e.type==='strength').length, sets=t.filter(e=>e.type==='strength').reduce((s,e)=>s+(e.s||0),0);
+  document.getElementById('gym-stats').innerHTML=card('teal','總訓練量',vol.toLocaleString(),'kg')+card('blue','動作數',sc,'項')+card('purple','總組數',sets,'組');
+  document.getElementById('gym-list').innerHTML=t.length?t.map(gRow).join(''):'<div class="empty">今天還沒記錄</div>';
+}
+function renderGymHist(){
+  const dates=[...new Set(gym.map(e=>e.date))].sort().reverse();
+  document.getElementById('gym-hist').innerHTML=dates.length?dates.map(d=>{const it=gym.filter(e=>e.date===d);const v=it.reduce((s,e)=>s+gVol(e),0);return `<div class="daygroup"><div class="dayhead"><span>${fmtDate(d)}</span><span class="meta">總量 ${v.toLocaleString()}kg</span></div>${it.map(gRow).join('')}</div>`;}).join(''):'<div class="empty">尚無記錄</div>';
+}
+function gFillProg(){const sel=document.getElementById('gprog-sel');const ex=[...new Set(gym.filter(e=>e.type==='strength').map(e=>e.exercise))];sel.innerHTML=ex.length?ex.map(x=>`<option>${x}</option>`).join(''):'<option>尚無資料</option>';}
+function gRenderProg(){
+  const ex=document.getElementById('gprog-sel').value;const data=gym.filter(e=>e.type==='strength'&&e.exercise===ex);
+  const el=document.getElementById('gprog-content');if(!data.length){el.innerHTML='<div class="empty">無資料</div>';return;}
+  const bd={};data.forEach(e=>{if(!bd[e.date]||e.w>bd[e.date].w)bd[e.date]={w:e.w,r:e.r,s:e.s};});
+  const dates=Object.keys(bd).sort(),vals=dates.map(d=>bd[d].w);
+  el.innerHTML=lineChart(dates.map(d=>d.slice(5)),vals,ex+' 重量(kg)','#00c9a7')+`<table class="progtable"><thead><tr><th>日期</th><th>重量</th><th>次×組</th></tr></thead><tbody>${dates.map(d=>`<tr><td>${d.slice(5)}</td><td>${bd[d].w}kg</td><td>${bd[d].r}×${bd[d].s}</td></tr>`).join('')}</tbody></table>`;
+}
+function gSetType(t){gType=t;document.getElementById('gtg-s').classList.toggle('on',t==='strength');document.getElementById('gtg-c').classList.toggle('on',t==='cardio');document.getElementById('g-sf').style.display=t==='strength'?'block':'none';document.getElementById('g-cf').style.display=t==='cardio'?'block':'none';}
+function gSave(){const date=document.getElementById('g-date').value;if(!date){toast('請選日期');return;}const note=document.getElementById('g-note').value;let e;if(gType==='strength'){const w=+document.getElementById('g-w').value;if(!w){toast('請輸入重量');return;}e={id:Date.now(),date,type:'strength',exercise:document.getElementById('g-ex-s').value,w,r:+document.getElementById('g-r').value||0,s:+document.getElementById('g-s').value||0,note};}else{e={id:Date.now(),date,type:'cardio',exercise:document.getElementById('g-ex-c').value,dur:+document.getElementById('g-dur').value||null,dist:+document.getElementById('g-dist').value||null,hr:+document.getElementById('g-hr').value||null,note};}gym.push(e);gym.sort((a,b)=>a.date.localeCompare(b.date)||a.id-b.id);lsSet('gymLogs',gym);['g-w','g-note'].forEach(i=>document.getElementById(i).value='');toast('✓ 已記錄');renderGymToday();renderOverview();}
+function gDel(id){if(!confirm('刪除？'))return;gym=gym.filter(e=>e.id!==id);lsSet('gymLogs',gym);renderGymToday();renderGymHist();renderOverview();}
+function gymSub(ev,s){document.querySelectorAll('.gympage').forEach(p=>p.style.display='none');document.querySelectorAll('#page-gym .tabs .tab').forEach(b=>b.classList.remove('on'));document.getElementById('gym-'+s).style.display='block';ev.target.classList.add('on');if(s==='today')renderGymToday();if(s==='hist')renderGymHist();if(s==='prog'){gFillProg();gRenderProg();}}
+
+// ════ DIET ════
+let dMeal='早餐';
+function dFoodHTML(e){return `<div class="food"><div class="food-main"><div class="food-name">${e.food}</div><div class="food-macro">蛋白${e.pro||0}g · 碳${e.carb||0}g · 脂${e.fat||0}g · 鈉${e.na||0}mg</div>${e.note?'<div class="food-note">'+e.note+'</div>':''}</div><div class="food-kcal"><div class="v">${e.kcal||0}</div><div class="l">kcal</div></div><button class="food-del" onclick="dDel(${e.id})">✕</button></div>`;}
+function renderDietToday(){
+  const t=food.filter(e=>e.date===TODAY);
+  const cal=t.reduce((s,e)=>s+(e.kcal||0),0),pro=+t.reduce((s,e)=>s+(e.pro||0),0).toFixed(1),na=t.reduce((s,e)=>s+(e.na||0),0);
+  setBar('d-cal','d-calbar','d-calmsg',cal,CAL_MAX,false,'kcal');
+  setBar('d-pro','d-probar','d-promsg',pro,PRO_MIN,true,'g');
+  setBar('d-na','d-nabar','d-namsg',na,NA_MAX,false,'mg');
+  document.getElementById('d-intake').textContent=cal.toLocaleString()+' kcal';
+  const burn=burns[TODAY],bi=document.getElementById('burn-in');if(burn&&document.activeElement!==bi)bi.value=burn;
+  const dn=document.getElementById('d-defnum'),dm=document.getElementById('d-defmsg');
+  if(burn){const d=burn-cal;dn.textContent=(d>=0?'+':'')+d.toLocaleString()+' kcal';dn.style.color=d>0?'var(--teal)':'var(--red)';dm.textContent=d>0?('✓ 正缺口 · 約 '+(d/7700*1000).toFixed(0)+'g 脂肪'):'熱量盈餘';}else{dn.textContent='—';dn.style.color='var(--muted)';dm.textContent='輸入手錶消耗以計算';}
+  document.getElementById('diet-meals').innerHTML=t.length?MO.filter(m=>t.some(e=>e.meal===m)).map(m=>{const it=t.filter(e=>e.meal===m);const mc=it.reduce((s,e)=>s+(e.kcal||0),0),mp=+it.reduce((s,e)=>s+(e.pro||0),0).toFixed(1);return `<div class="meal-head"><span class="meal-name">${m}</span><span class="meal-sub">${mc}kcal · 蛋白${mp}g</span></div>${it.map(dFoodHTML).join('')}`;}).join(''):'<div class="empty">今天還沒記錄</div>';
+}
+function setBar(vid,bid,mid,val,target,higherBetter,unit){
+  document.getElementById(vid).textContent=typeof val==='number'&&val%1!==0?val:val.toLocaleString();
+  const bar=document.getElementById(bid),msg=document.getElementById(mid);
+  bar.style.width=Math.min(val/target*100,100)+'%';
+  if(higherBetter){bar.style.background=val>=target?'var(--lime)':'var(--blue)';msg.textContent=val>=target?('✓ 達標 +'+(val-target).toFixed(1)+unit):('還差 '+(target-val).toFixed(1)+unit);}
+  else{bar.style.background=val>target?'var(--red)':(val>target*0.8?'var(--amber)':'var(--lime)');msg.textContent=val>target?('⚠️ 超出 '+(val-target).toLocaleString()+unit):('剩 '+(target-val).toLocaleString()+unit);}
+}
+function renderDietHist(){const dates=[...new Set(food.map(e=>e.date))].sort().reverse();document.getElementById('diet-hist').innerHTML=dates.length?dates.map(d=>{const it=food.filter(e=>e.date===d);const c=it.reduce((s,e)=>s+(e.kcal||0),0),p=+it.reduce((s,e)=>s+(e.pro||0),0).toFixed(0),na=it.reduce((s,e)=>s+(e.na||0),0);const b=burns[d],df=b?' · 缺口'+(b-c>=0?'+':'')+(b-c):'';return `<div class="daygroup"><div class="dayhead"><span>${fmtDate(d)}</span><span class="meta">${c}kcal·蛋白${p}g·鈉${na}mg${df}</span></div>${MO.filter(m=>it.some(e=>e.meal===m)).map(m=>`<div class="meal-head"><span class="meal-name" style="font-size:11px">${m}</span></div>`+it.filter(e=>e.meal===m).map(dFoodHTML).join('')).join('')}</div>`;}).join(''):'<div class="empty">尚無記錄</div>';}
+function renderDietTrend(){const dates=[...new Set(food.map(e=>e.date))].sort();if(!dates.length){document.getElementById('diet-trend').innerHTML='<div class="empty">記錄多天後顯示</div>';return;}const cals=dates.map(d=>food.filter(e=>e.date===d).reduce((s,e)=>s+(e.kcal||0),0));const pros=dates.map(d=>+food.filter(e=>e.date===d).reduce((s,e)=>s+(e.pro||0),0).toFixed(0));document.getElementById('diet-trend').innerHTML=lineChart(dates.map(d=>d.slice(5)),cals,'每日熱量(kcal)','#00c9a7',CAL_MAX)+lineChart(dates.map(d=>d.slice(5)),pros,'每日蛋白質(g)','#5b9df5',PRO_MIN);}
+function dSetMeal(m){dMeal=m;document.querySelectorAll('#diet-add .mealsel button').forEach(b=>b.classList.toggle('on',b.textContent===m));}
+function dPreset(n,k,p,c,f,na){document.getElementById('d-food').value=n;document.getElementById('d-kcal').value=k;document.getElementById('d-pro-i').value=p;document.getElementById('d-carb').value=c;document.getElementById('d-fat').value=f;document.getElementById('d-na-i').value=na;toast('帶入 '+n);}
+function dSave(){const date=document.getElementById('d-date').value,fd=document.getElementById('d-food').value.trim();if(!date){toast('請選日期');return;}if(!fd){toast('請輸入食物');return;}const e={id:Date.now(),date,meal:dMeal,food:fd,kcal:+document.getElementById('d-kcal').value||0,pro:+document.getElementById('d-pro-i').value||0,carb:+document.getElementById('d-carb').value||0,fat:+document.getElementById('d-fat').value||0,na:+document.getElementById('d-na-i').value||0,note:document.getElementById('d-note').value};food.push(e);food.sort((a,b)=>a.date.localeCompare(b.date)||a.id-b.id);lsSet('foodLogs',food);['d-food','d-kcal','d-pro-i','d-carb','d-fat','d-na-i','d-note'].forEach(i=>document.getElementById(i).value='');toast('✓ 已記錄 '+fd);renderDietToday();renderOverview();}
+function dDel(id){if(!confirm('刪除？'))return;food=food.filter(e=>e.id!==id);lsSet('foodLogs',food);renderDietToday();renderDietHist();renderOverview();}
+function dSaveBurn(){const v=+document.getElementById('burn-in').value;if(v>0)burns[TODAY]=v;else delete burns[TODAY];lsSet('dailyBurn',burns);renderDietToday();renderOverview();}
+function dietSub(ev,s){document.querySelectorAll('.dietpage').forEach(p=>p.style.display='none');document.querySelectorAll('#page-diet .tabs .tab').forEach(b=>b.classList.remove('on'));document.getElementById('diet-'+s).style.display='block';ev.target.classList.add('on');if(s==='today')renderDietToday();if(s==='hist')renderDietHist();if(s==='trend')renderDietTrend();}
+
+// ════ SHARED LINE CHART ════
+function lineChart(labels,vals,title,color,goal){
+  const W=360,H=130,PL=40,PR=12,PT=14,PB=22,cw=W-PL-PR,ch=H-PT-PB,n=vals.length;
+  const allv=vals.concat(goal?[goal]:[]);let mn=Math.min(...allv)*0.9,mx=Math.max(...allv)*1.08||1;
+  const xp=i=>n===1?PL+cw/2:PL+i/(n-1)*cw,yp=v=>PT+ch-(v-mn)/(mx-mn||1)*ch;
+  const pts=vals.map((v,i)=>`${xp(i).toFixed(1)},${yp(v).toFixed(1)}`).join(' ');
+  const line=n>1?`<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2"/>`:'';
+  const dots=vals.map((v,i)=>`<circle cx="${xp(i).toFixed(1)}" cy="${yp(v).toFixed(1)}" r="3" fill="${color}"/><text x="${xp(i).toFixed(1)}" y="${(yp(v)-6).toFixed(1)}" fill="${color}" font-size="9" text-anchor="middle" font-family="monospace">${v}</text>`).join('');
+  const gl=goal?`<line x1="${PL}" y1="${yp(goal).toFixed(1)}" x2="${W-PR}" y2="${yp(goal).toFixed(1)}" stroke="#f0a500" stroke-width="1" stroke-dasharray="4 3"/>`:'';
+  const xl=labels.map((d,i)=>`<text x="${xp(i).toFixed(1)}" y="${H-5}" fill="#4a6580" font-size="8" text-anchor="middle">${d}</text>`).join('');
+  return `<div class="chart-box"><div class="chart-title">${title}</div><svg class="chart" viewBox="0 0 ${W} ${H}">${gl}${line}${dots}${xl}</svg></div>`;
+}
+
+// ════ TABS & INIT ════
+function showTab(ev,t){document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.app>.tabs>.tab').forEach(b=>b.classList.remove('on'));document.getElementById('page-'+t).classList.add('on');ev.target.classList.add('on');if(t==='overview')renderOverview();if(t==='body')renderBody();if(t==='gym')renderGymToday();if(t==='diet')renderDietToday();}
+function toast(m){const el=document.getElementById('toast');el.textContent=m;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2000);}
+document.getElementById('g-date').value=TODAY;
+document.getElementById('d-date').value=TODAY;
+renderOverview();
+</script>
+</body>
+</html>
