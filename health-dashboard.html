@@ -112,7 +112,7 @@ svg.chart{width:100%;overflow:visible}
 </head>
 <body>
 <div class="app">
-  <h1>🫀 蕭家杰 術後健康整合面板 <span class="badge">v5.0</span></h1>
+  <h1>🫀 蕭家杰 術後健康整合面板 <span class="badge">v5.1</span></h1>
   <div class="sub">Left Radical Nephrectomy · RCC G2 pT3a · 林口長庚 · HBF-702T · 單檔整合版</div>
 
   <div class="tabs">
@@ -239,7 +239,7 @@ svg.chart{width:100%;overflow:visible}
     <div id="diet-trend" class="dietpage" style="display:none"></div>
   </div>
 
-  <div class="foot">術後健康整合面板 v5.0 · 體組成寫入HTML · 健身/飲食存localStorage<br>手術日 2026/03/30 · 目標 90kg/24%/33kg · 蛋白≥120g · 鈉≤2000mg</div>
+  <div class="foot">術後健康整合面板 v5.1 · 體組成寫入HTML · 健身/飲食存localStorage<br>手術日 2026/03/30 · 目標 90kg/24%/33kg · 蛋白≥120g · 鈉≤2000mg</div>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -286,6 +286,8 @@ const BODY=[
   {d:"05-27",w:97.9,f:30.3,fm:29.7,v:16.5,b:2010,m:29.8,mm:29.2,bmi:29.9,ba:59,sf:21.5},
   {d:"06-06",w:96.8,f:31.3,fm:30.3,v:16.5,b:1984,m:29.2,mm:28.3,bmi:29.5,ba:60,sf:22.0},
   {d:"06-07",w:98.1,f:30.0,fm:29.4,v:17.0,b:2015,m:30.0,mm:29.4,bmi:29.9,ba:59,sf:21.3},
+  {d:"06-10",w:96.7,f:30.9,fm:29.9,v:16.5,b:1981,m:29.4,mm:28.4,bmi:29.8,ba:60,sf:21.8},
+  {d:"06-12",w:98.6,f:null,fm:null,v:null,b:null,m:null,mm:null,bmi:null,ba:null,sf:null},
 ];
 const GYM_SEED=[
   {id:1718000001,date:"2026-06-07",type:"cardio",exercise:"暖身騎乘",dur:15.9,dist:2.88,hr:108,note:"均速10.9km/h · 爬升15m"},
@@ -362,10 +364,10 @@ function renderOverview(){
   document.getElementById('mile-804').textContent=c804>0?'還有 '+c804+' 天':(c804===0?'就是今天':'已完成');
   const L=BODY[BODY.length-1];
   document.getElementById('ov-body').innerHTML=
-    card('teal','體重',L.w,'kg')+card('red','體脂率',L.f+'%','體脂'+L.fm+'kg')+
+    card('teal','體重',L.w,'kg')+card('red','體脂率',L.f!=null?L.f+'%':'—',L.fm!=null?'體脂'+L.fm+'kg':'待測')+
     card('blue','骨骼肌',L.mm,'kg')+card('amber','內臟脂肪',L.v,'等級');
   document.getElementById('ov-goals').innerHTML=
-    gcard('體重',L.w,GOAL.w,'kg',true)+gcard('體脂',L.f,GOAL.f,'%',true)+gcard('肌肉',L.mm,GOAL.mm,'kg',false);
+    gcard('體重',L.w,GOAL.w,'kg',true)+gcard('體脂',L.f!=null?L.f:F.f,GOAL.f,'%',true)+gcard('肌肉',L.mm!=null?L.mm:F.mm,GOAL.mm,'kg',false);
   // today gym+diet
   const gt=gym.filter(e=>e.date===TODAY);
   const vol=gt.reduce((s,e)=>s+(e.type==='strength'?(e.w||0)*(e.r||0)*(e.s||0):0),0);
@@ -391,7 +393,7 @@ function renderBody(){
   document.getElementById('body-today-t').textContent='今日數據（'+L.d+' 晨量）';
   document.getElementById('body-today').innerHTML=
     `<div class="sc teal"><div class="sl">體重</div><div class="sv">${L.w}</div><div class="su">kg</div></div>`+
-    `<div class="sc red"><div class="sl">體脂肪</div><div class="sv">${L.f}%</div><div class="su">${L.fm} kg</div><span class="stag">偏高</span></div>`+
+    `<div class="sc red"><div class="sl">體脂肪</div><div class="sv">${L.f!=null?L.f+'%':'—'}</div><div class="su">${L.fm!=null?L.fm+' kg':'待測'}</div>${L.f!=null?'<span class="stag">偏高</span>':''}</div>`+
     `<div class="sc blue"><div class="sl">骨骼肌</div><div class="sv">${L.m}%</div><div class="su">${L.mm} kg</div></div>`+
     `<div class="sc red"><div class="sl">內臟脂肪</div><div class="sv">${L.v}</div><div class="su">等級(正常≤9)</div><span class="stag">危險</span></div>`+
     `<div class="sc amber"><div class="sl">BMI</div><div class="sv">${L.bmi}</div><div class="su">過重</div><span class="stag w">+</span></div>`+
@@ -403,7 +405,7 @@ function renderBody(){
   const days=daysBetween('2026-'+F.d,'2026-'+L.d);
   document.getElementById('body-prog-t').textContent=days+'天進展（'+F.d+'→'+L.d+'）';
   const deltas=[
-    ['體重',L.w-F.w,'kg',false],['脂肪量',L.fm-F.fm,'kg',false],['體脂率',L.f-F.f,'%',false],
+    ['體重',L.w-F.w,'kg',false],['脂肪量',L.fm!=null?L.fm-F.fm:null,'kg',false],['體脂率',L.f!=null?L.f-F.f:null,'%',false],
     ['骨骼肌',L.mm-F.mm,'kg',true],['內臟脂肪',L.v-F.v,'級',false],['身體年齡',L.ba-F.ba,'歲',false]
   ];
   document.getElementById('body-delta').innerHTML=deltas.map(([n,d,u,hi])=>{
